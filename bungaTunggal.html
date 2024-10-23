@@ -3,76 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Angsuran Pinjaman</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Kalkulator Bunga Tunggal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
 
-<div class="container mx-auto bg-white p-6 rounded shadow-md">
-    <h1 class="text-2xl font-bold mb-4">Kalkulator Angsuran Pinjaman</h1>
-    
-    <form id="loanForm" class="space-y-4">
+  <div class="container mx-auto bg-white p-8 shadow-md rounded-lg max-w-lg">
+    <h2 class="text-2xl font-bold mb-4 text-center">Kalkulator Bunga Tunggal</h2>
+
+    <form id="bungaTunggalForm" class="space-y-4">
         <div>
-            <label for="loanAmount" class="block text-sm font-medium">Jumlah Pinjaman (Rp)</label>
-            <input type="number" id="loanAmount" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <label for="M" class="block text-sm font-medium">Modal Awal (M):</label>
+            <input type="number" id="M" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div>
-            <label for="monthlyPayment" class="block text-sm font-medium">Angsuran Bulanan (Rp)</label>
-            <input type="number" id="monthlyPayment" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <label for="b" class="block text-sm font-medium">Persentase Bunga (%):</label>
+            <input type="number" id="b" step="0.01" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div>
-            <label for="interestRate" class="block text-sm font-medium">Suku Bunga (%)</label>
-            <input type="number" id="interestRate" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <label for="t" class="block text-sm font-medium">Waktu (Tahun atau Bulan):</label>
+            <input type="number" id="t" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div>
-            <label for="period" class="block text-sm font-medium">Periode (Bulan ke-)</label>
-            <input type="number" id="period" required value="8" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <label for="periode" class="block text-sm font-medium">Periode Waktu:</label>
+            <select id="periode" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="tahun">Tahun</option>
+                <option value="bulan">Bulan</option>
+            </select>
         </div>
 
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Hitung Angsuran ke-8</button>
+        <button type="button" onclick="hitungBungaTunggal()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Hitung
+        </button>
     </form>
 
-    <div id="result" class="mt-6"></div>
-</div>
+    <h3 class="text-xl font-bold mt-8 mb-4 text-center">Hasil Perhitungan</h3>
+    <p id="hasilBunga" class="text-center text-gray-700"></p>
+    <p id="hasilTotal" class="text-center text-gray-700"></p>
+  </div>
 
-<script>
-document.getElementById('loanForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+  <script>
+    function hitungBungaTunggal() {
+        const M = parseFloat(document.getElementById('M').value);
+        const b = parseFloat(document.getElementById('b').value) / 100;
+        let t = parseFloat(document.getElementById('t').value);
+        const periode = document.getElementById('periode').value;
 
-    const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    const monthlyPayment = parseFloat(document.getElementById('monthlyPayment').value);
-    const interestRate = parseFloat(document.getElementById('interestRate').value) / 100; // Convert to decimal
-    const period = parseInt(document.getElementById('period').value);
+        // Ubah satuan waktu ke tahun jika dalam bulan
+        if (periode === "bulan") {
+            t = t / 12;
+        }
 
-    let remainingLoan = loanAmount;
-    let interest, principal;
+        // Rumus menghitung bunga tunggal
+        const B = M * b * t;
+        const Mt = M + B;
 
-    // Hitung bunga dan angsuran pokok hingga periode ke-n
-    for (let month = 1; month <= period; month++) {
-        interest = remainingLoan * interestRate; // Hitung bunga
-        principal = monthlyPayment - interest; // Hitung angsuran pokok
+        // Format angka ke Rupiah
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            }).format(angka);
+        };
 
-        remainingLoan -= principal; // Update sisa pinjaman
+        // Tampilkan hasil
+        document.getElementById('hasilBunga').textContent = `Bunga: ${formatRupiah(B)}`;
+        document.getElementById('hasilTotal').textContent = `Total Modal Akhir: ${formatRupiah(Mt)}`;
     }
+  </script>
 
-    // Tampilkan hasil untuk bulan ke-n
-    const totalPayment = monthlyPayment; // Total angsuran tetap
-    
-    // Format angka dengan Intl.NumberFormat
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
-    };
-
-    document.getElementById('result').innerHTML = `
-        <h2 class="text-lg font-bold">Hasil:</h2>
-        <p>Bunga (Bulan ke-${period}): ${formatCurrency(interest.toFixed(2))}</p>
-        <p>Angsuran Pokok (Bulan ke-${period}): ${formatCurrency(principal.toFixed(2))}</p>
-        <p>Besar Angsuran ke-${period}: ${formatCurrency(totalPayment.toFixed(2))}</p>
-    `;
-});
-</script>
 </body>
 </html>
