@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,84 +7,69 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w">
+        <h2 class="text-center text-2xl font-bold mb-6">Kalkulator Anuitas</h2>
+        <form id="anuitasForm">
+            <label for="modal" class="block mb-2 font-semibold">Jumlah Pinjaman (Modal):</label>
+            <input type="number" id="modal" class="border border-gray-300 rounded p-2 w-full mb-4" required>
 
-  <div class="container mx-auto bg-white p-8 shadow-md rounded-lg max-w">
-    <h2 class="text-2xl font-bold mb-4 text-center">Kalkulator Anuitas</h2>
+            <label for="bunga" class="block mb-2 font-semibold">Suku Bunga (%):</label>
+            <input type="number" id="bunga" step="0.01" class="border border-gray-300 rounded p-2 w-full mb-4" required>
 
-    <form id="anuitasForm" class="space-y-4">
-        <div>
-            <label for="M_anuitas" class="block text-sm font-medium">Jumlah Pinjaman (M):</label>
-            <input type="number" id="M_anuitas" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+            <label for="anuitas" class="block mb-2 font-semibold">Anuitas:</label>
+            <input type="number" id="anuitas" class="border border-gray-300 rounded p-2 w-full mb-4" required>
 
-        <div>
-            <label for="b_anuitas" class="block text-sm font-medium">Suku Bunga (%) :</label>
-            <input type="number" id="b_anuitas" step="0.01" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+            <label for="periode" class="block mb-2 font-semibold">Jumlah Periode (Tahun):</label>
+            <input type="number" id="periode" class="border border-gray-300 rounded p-2 w-full mb-4" required>
 
-        <div>
-            <label for="A_anuitas" class="block text-sm font-medium">Anuitas (A):</label>
-            <input type="number" id="A_anuitas" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+            <button type="button" onclick="hitungAnuitas()" class="bg-green-500 text-white rounded py-2 hover:bg-green-600 w-full">Hitung Anuitas</button>
+        </form>
 
-        <div>
-            <label for="periode_anuitas" class="block text-sm font-medium">Jumlah Periode:</label>
-            <input type="number" id="periode_anuitas" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <button type="button" onclick="hitungAnuitas()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-            Hitung Anuitas
-        </button>
-    </form>
-
-    <h3 class="text-xl font-bold mt-8 mb-4 text-center">Hasil Perhitungan Anuitas</h3>
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white text-center border border-gray-300">
-          <thead>
-              <tr class="bg-blue-500 text-white">
-                  <th class="py-2 px-4 border-b">Periode Ke</th>
-                  <th class="py-2 px-4 border-b">Pinjaman Awal (M)</th>
-                  <th class="py-2 px-4 border-b">Bunga (B)</th>
-                  <th class="py-2 px-4 border-b">Angsuran (a)</th>
-                  <th class="py-2 px-4 border-b">Sisa Pinjaman (S)</th>
-              </tr>
-          </thead>
-          <tbody id="tabelAnuitas">
-              <!-- Hasil perhitungan akan ditampilkan di sini -->
-          </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    function hitungAnuitas() {
-        const M = parseFloat(document.getElementById('M_anuitas').value);
-        const b = parseFloat(document.getElementById('b_anuitas').value) / 100;
-        const A = parseFloat(document.getElementById('A_anuitas').value);
-        const n = parseInt(document.getElementById('periode_anuitas').value);
-
-        let sisaPinjaman = M;
-        const tbody = document.querySelector('#tabelAnuitas');
-        tbody.innerHTML = ''; // Bersihkan tabel sebelum mengisi
-
-        for (let i = 1; i <= n; i++) {
-            const bunga = sisaPinjaman * b;
-            const angsuran = A - bunga;
-            sisaPinjaman -= angsuran;
-
-            const row = `
+        <h3 class="text-lg font-semibold mt-6">Hasil Perhitungan Anuitas</h3>
+        <table class="mt-4 w-full border-collapse">
+            <thead>
                 <tr>
-                    <td class="py-2 px-4 border-b">${i}</td>
-                    <td class="py-2 px-4 border-b">Rp ${M.toFixed(2)}</td>
-                    <td class="py-2 px-4 border-b">Rp ${bunga.toFixed(2)}</td>
-                    <td class="py-2 px-4 border-b">Rp ${angsuran.toFixed(2)}</td>
-                    <td class="py-2 px-4 border-b">Rp ${sisaPinjaman.toFixed(2)}</td>
+                    <th class="border border-gray-300 bg-blue-500 text-white p-2">Periode Ke</th>
+                    <th class="border border-gray-300 bg-blue-500 text-white p-2">Pinjaman Awal (M)</th>
+                    <th class="border border-gray-300 bg-blue-500 text-white p-2">Bunga (B)</th>
+                    <th class="border border-gray-300 bg-blue-500 text-white p-2">Angsuran (A)</th>
+                    <th class="border border-gray-300 bg-blue-500 text-white p-2">Sisa Pinjaman (S)</th>
                 </tr>
-            `;
-            tbody.innerHTML += row;
-        }
-    }
-  </script>
+            </thead>
+            <tbody id="anuitasBody">
+                <!-- Hasil perhitungan akan ditampilkan di sini -->
+            </tbody>
+        </table>
+    </div>
 
+    <script>
+        function hitungAnuitas() {
+            let modal = parseFloat(document.getElementById('modal').value);
+            let bungaTahunan = parseFloat(document.getElementById('bunga').value) / 100;
+            let periodeTahun = parseInt(document.getElementById('periode').value);
+            let anuitas = parseFloat(document.getElementById('anuitas').value);
+
+            const anuitasBody = document.getElementById('anuitasBody');
+            anuitasBody.innerHTML = '';
+
+            let sisaPinjaman = modal;
+            for (let i = 1; i <= periodeTahun; i++) {
+                let bunga = sisaPinjaman * bungaTahunan; // Hitung bunga untuk tahun ini
+                let angsuran = anuitas - bunga; // Hitung angsuran pokok
+                let sisa = sisaPinjaman - angsuran; // Hitung sisa pinjaman
+
+                let row = `<tr>
+                    <td class="border border-gray-300 p-2 text-center">${i}</td>
+                    <td class="border border-gray-300 p-2 text-center">Rp${sisaPinjaman.toLocaleString('id-ID')}</td>
+                    <td class="border border-gray-300 p-2 text-center">Rp${bunga.toLocaleString('id-ID')}</td>
+                    <td class="border border-gray-300 p-2 text-center">Rp${angsuran.toLocaleString('id-ID')}</td>
+                    <td class="border border-gray-300 p-2 text-center">Rp${sisa.toLocaleString('id-ID')}</td>
+                </tr>`;
+                anuitasBody.innerHTML += row;
+
+                sisaPinjaman = sisa; // Update sisa pinjaman untuk periode berikutnya
+            }
+        }
+    </script>
 </body>
 </html>
