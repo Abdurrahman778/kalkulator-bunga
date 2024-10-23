@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Bunga Majemuk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+  <div class="bg-white p-8 rounded shadow-lg w-96">
+    <h1 class="text-2xl font-bold mb-4 text-center">Kalkulator Bunga Majemuk</h1>
+
+    <label for="tipe" class="block text-lg">Pilih Perhitungan:</label>
+    <select id="tipe" class="border p-2 w-full mb-4 rounded" onchange="toggleInputFields()">
+      <option value="akhir">Cari Modal Akhir (Mt)</option>
+      <option value="awal">Cari Modal Awal (M)</option>
+    </select>
+
+    <div id="modal-awal">
+      <label for="modal" class="block text-lg">Modal Awal (M):</label>
+      <input id="modal" type="number" placeholder="Masukkan modal awal" class="border p-2 w-full mb-4 rounded">
+    </div>
+
+    <div id="modal-akhir" class="hidden">
+      <label for="modalAkhir" class="block text-lg">Modal Akhir (Mt):</label>
+      <input id="modalAkhir" type="number" placeholder="Masukkan modal akhir" class="border p-2 w-full mb-4 rounded">
+    </div>
+
+    <label for="bunga" class="block text-lg">Persentase Bunga (%/tahun):</label>
+    <input id="bunga" type="number" placeholder="Masukkan persentase bunga" class="border p-2 w-full mb-4 rounded">
+
+    <label for="waktu" class="block text-lg">Waktu:</label>
+    <div class="flex space-x-2 mb-4">
+      <input id="waktu" type="number" placeholder="Masukkan waktu" class="border p-2 w-1/2 rounded">
+      <select id="satuan-waktu" class="border p-2 w-1/2 rounded">
+        <option value="tahun">Tahun</option>
+        <option value="triwulan">Triwulan (3 bulan)</option>
+        <option value="semester">Semester (6 bulan)</option>
+      </select>
+    </div>
+
+    <button onclick="hitungBungaMajemuk()" class="bg-blue-500 text-white py-2 px-4 rounded w-full">Hitung</button>
+
+    <div id="hasil" class="mt-6"></div>
+  </div>
+
+  <script>
+    function toggleInputFields() {
+      const tipe = document.getElementById('tipe').value;
+      const modalAwal = document.getElementById('modal-awal');
+      const modalAkhir = document.getElementById('modal-akhir');
+      
+      if (tipe === "akhir") {
+        modalAwal.classList.remove("hidden");
+        modalAkhir.classList.add("hidden");
+      } else {
+        modalAwal.classList.add("hidden");
+        modalAkhir.classList.remove("hidden");
+      }
+    }
+
+    function hitungBungaMajemuk() {
+      const tipe = document.getElementById('tipe').value;
+      const b = parseFloat(document.getElementById('bunga').value) / 100;
+      let t = parseFloat(document.getElementById('waktu').value);
+      const satuanWaktu = document.getElementById('satuan-waktu').value;
+
+      // Validasi input
+      if (isNaN(b) || isNaN(t) || b <= 0 || t <= 0) {
+        document.getElementById('hasil').innerHTML = "<p class='text-red-500'>Harap masukkan semua nilai dengan benar.</p>";
+        return;
+      }
+
+      // Konversi waktu berdasarkan satuan yang dipilih
+      if (satuanWaktu === "triwulan") {
+        t = t * (3 / 12);  // Konversi triwulan ke tahun
+      } else if (satuanWaktu === "semester") {
+        t = t * (6 / 12);  // Konversi semester ke tahun
+      }
+
+      const formatNumber = new Intl.NumberFormat('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+
+      // Mencari Modal Akhir (Mt) atau Modal Awal (M)
+      if (tipe === "akhir") {
+        const M = parseFloat(document.getElementById('modal').value);
+        if (isNaN(M) || M <= 0) {
+          document.getElementById('hasil').innerHTML = "<p class='text-red-500'>Harap masukkan modal awal yang benar.</p>";
+          return;
+        }
+        const Mt = M * Math.pow(1 + b, t);
+        document.getElementById('hasil').innerHTML = `
+          <p class='text-lg'><strong>Modal Akhir (Mt):</strong> Rp ${formatNumber.format(Mt)}</p>
+        `;
+      } else {
+        const Mt = parseFloat(document.getElementById('modalAkhir').value);
+        if (isNaN(Mt) || Mt <= 0) {
+          document.getElementById('hasil').innerHTML = "<p class='text-red-500'>Harap masukkan modal akhir yang benar.</p>";
+          return;
+        }
+        let M = Mt / Math.pow(1 + b, t);
+        M = Math.floor(M);  // Membulatkan kebawah hasil Modal Awal (M)
+        document.getElementById('hasil').innerHTML = `
+          <p class='text-lg'><strong>Modal Awal (M):</strong> Rp ${formatNumber.format(M)}</p>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
